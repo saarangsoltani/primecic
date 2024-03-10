@@ -1,8 +1,10 @@
+// hello to you
 package main
 
 import (
 	"fmt"
 	"log"
+	"strconv"
 
 	"github.com/joho/godotenv"
 	"gocandoit.xyz/cli"
@@ -15,7 +17,8 @@ func main() {
 	readEnv()
 	util.ClearScreen()
 
-	applicant, _ := api.GetApplicant("2")
+	applicantID := promptForApplicantID()
+	applicant, _ := api.GetApplicant(applicantID)
 	choice := cli.Start()
 	if choice == "IMM5257" {
 		fillers.FillForm(applicant)
@@ -29,4 +32,27 @@ func readEnv() {
 	if err != nil {
 		log.Fatalf("Error loading .env file: %v", err)
 	}
+}
+
+func promptForApplicantID() string {
+	fmt.Println("Welcome to the PRIMECIC CLI. This command-line application allows you complete CIC immigration forms in a quick and efficient manner.")
+
+	inputValidated := false
+	var id string
+	fmt.Print("\nTo start, enter the applicant ID: ")
+	retryMessage := "Invalid input. Please enter a valid applicant ID: "
+	for !inputValidated {
+		_, err := fmt.Scanf("%s", &id)
+		if err != nil {
+			fmt.Print(retryMessage)
+		} else {
+			_, err := strconv.Atoi(id)
+			if err != nil {
+				fmt.Print(retryMessage)
+			} else {
+				inputValidated = true
+			}
+		}
+	}
+	return id
 }
